@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -60,7 +61,7 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void onDragonDeath(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof ServerPlayer player){// && event.getEntity() instanceof EnderDragon) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player && event.getEntity() instanceof EnderDragon) {
             Scoreboard scoreboard = player.level().getScoreboard();
             Objective objective = scoreboard.getObjective("dragon_kills");
             if (objective == null) {
