@@ -1,4 +1,4 @@
-package net.jwn.jwnssomanydragoneggs;
+package net.jwn.jwnmanyegg;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

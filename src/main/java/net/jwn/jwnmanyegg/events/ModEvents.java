@@ -1,17 +1,14 @@
-package net.jwn.jwnssomanydragoneggs.events;
+package net.jwn.jwnmanyegg.events;
 
-import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
-import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
-import net.jwn.jwnssomanydragoneggs.egg.EggRankedBlockEntity;
-import net.jwn.jwnssomanydragoneggs.egg.ModBlocks;
-import net.minecraft.ChatFormatting;
+import net.jwn.jwnmanyegg.JWNsDragonEggMod;
+import net.jwn.jwnmanyegg.data.ModDataComponents;
+import net.jwn.jwnmanyegg.egg.EggRankedBlockEntity;
+import net.jwn.jwnmanyegg.egg.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +16,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ScoreAccess;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -83,7 +78,7 @@ public class ModEvents {
 
             ItemStack egg = new ItemStack(ModBlocks.EGG_RANKED_BLOCK.asItem());
 
-            egg.set(ModDataComponents.OWNER_NAME.get(), player.getName().getString());
+            egg.set(ModDataComponents.OWNER.get(), player.getName().getString());
             egg.set(ModDataComponents.RANK.get(), score.get());
 
             boolean added = player.getInventory().add(egg);
@@ -116,7 +111,7 @@ public class ModEvents {
         if (!event.getItemStack().is(ModBlocks.EGG_RANKED_BLOCK.asItem()) && !event.getItemStack().is(Items.DRAGON_EGG)) return;
         ItemStack stack = event.getItemStack();
         String owner = stack.getOrDefault(
-                ModDataComponents.OWNER_NAME.get(),
+                ModDataComponents.OWNER.get(),
                 "Unknown"
         );
 
@@ -132,7 +127,7 @@ public class ModEvents {
                 .withStyle(style -> style.withColor(0xCD7F32)));
         else event.getToolTip().addFirst(Component.literal("#" + rank)
                     .withStyle(style -> style.withColor(0x444444)));
-        event.getToolTip().add(Component.translatable("tooltip.jwnssomanydragoneggs.dragon_egg.owner").append(": " + owner));
+        event.getToolTip().add(Component.translatable("tooltip.jwnmanyegg.dragon_egg.owner").append(": " + owner));
     }
 
     @SubscribeEvent
@@ -145,7 +140,7 @@ public class ModEvents {
                 if (level.getBlockEntity(pos) instanceof EggRankedBlockEntity eggBe) {
                     CompoundTag tag = new CompoundTag();
                     tag.putInt("rank", eggBe.getRank());
-                    tag.putString("owner_name", eggBe.getOwner());
+                    tag.putString("owner", eggBe.getOwner());
 
                     fallingBlock.blockData = tag;
                 }
@@ -165,7 +160,7 @@ public class ModEvents {
                 if (nbt != null && !nbt.isEmpty()) {
                     ItemStack stack = new ItemStack(ModBlocks.EGG_RANKED_BLOCK.get());
                     if (nbt.contains("egg_rank")) nbt.getInt("egg_rank").ifPresent(i -> stack.set(ModDataComponents.RANK.get(), i));
-                    if (nbt.contains("egg_owner")) nbt.getString("egg_owner").ifPresent(s -> stack.set(ModDataComponents.OWNER_NAME.get(), s));
+                    if (nbt.contains("egg_owner")) nbt.getString("egg_owner").ifPresent(s -> stack.set(ModDataComponents.OWNER.get(), s));
 
                     BlockPos pos = event.getEntity().blockPosition();
                     ItemEntity itemEntity = new ItemEntity(event.getLevel(),

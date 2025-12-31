@@ -1,4 +1,4 @@
-package net.jwn.jwnssomanydragoneggs;
+package net.jwn.jwnmanyegg;
 
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;

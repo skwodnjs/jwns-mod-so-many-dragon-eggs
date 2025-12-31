@@ -1,6 +1,6 @@
-package net.jwn.jwnssomanydragoneggs.egg;
+package net.jwn.jwnmanyegg.egg;
 
-import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
+import net.jwn.jwnmanyegg.JWNsDragonEggMod;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;

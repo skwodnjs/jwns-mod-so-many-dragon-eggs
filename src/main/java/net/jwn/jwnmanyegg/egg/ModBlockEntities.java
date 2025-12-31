@@ -1,6 +1,6 @@
-package net.jwn.jwnssomanydragoneggs.egg;
+package net.jwn.jwnmanyegg.egg;
 
-import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
+import net.jwn.jwnmanyegg.JWNsDragonEggMod;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -13,7 +13,7 @@ public class ModBlockEntities {
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, JWNsDragonEggMod.MOD_ID);
 
     public static final Supplier<BlockEntityType<EggRankedBlockEntity>> EggRankedBlockEntity =
-            BLOCK_ENTITIES.register("dragon_egg_ranked_block_entity", () -> new BlockEntityType<>(
+            BLOCK_ENTITIES.register("dragon_egg_ranked_be", () -> new BlockEntityType<>(
                     EggRankedBlockEntity::new, ModBlocks.EGG_RANKED_BLOCK.get()));
 
     public static void register(IEventBus eventBus) {

@@ -1,7 +1,7 @@
-package net.jwn.jwnssomanydragoneggs.data;
+package net.jwn.jwnmanyegg.data;
 
 import com.mojang.serialization.Codec;
-import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
+import net.jwn.jwnmanyegg.JWNsDragonEggMod;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -11,8 +11,8 @@ public class ModDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, JWNsDragonEggMod.MOD_ID);
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> OWNER_NAME =
-            DATA_COMPONENTS.register("owner_name",
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> OWNER =
+            DATA_COMPONENTS.register("owner",
                     () -> DataComponentType.<String>builder()
                             .persistent(Codec.STRING)
                             .build()

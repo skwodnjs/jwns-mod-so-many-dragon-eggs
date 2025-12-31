@@ -1,10 +1,10 @@
-package net.jwn.jwnssomanydragoneggs;
+package net.jwn.jwnmanyegg;
 
 import com.mojang.logging.LogUtils;
-import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
-import net.jwn.jwnssomanydragoneggs.egg.ModBlockEntities;
-import net.jwn.jwnssomanydragoneggs.egg.ModBlocks;
-import net.jwn.jwnssomanydragoneggs.egg.ModItems;
+import net.jwn.jwnmanyegg.data.ModDataComponents;
+import net.jwn.jwnmanyegg.egg.ModBlockEntities;
+import net.jwn.jwnmanyegg.egg.ModBlocks;
+import net.jwn.jwnmanyegg.egg.ModItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 @Mod(JWNsDragonEggMod.MOD_ID)
 public class JWNsDragonEggMod {
     // Define mod id in a common place for everything to reference
-    public static final String MOD_ID = "jwnssomanydragoneggs";
+    public static final String MOD_ID = "jwnmanyegg";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace

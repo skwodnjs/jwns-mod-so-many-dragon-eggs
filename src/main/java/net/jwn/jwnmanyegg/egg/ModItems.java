@@ -1,6 +1,6 @@
-package net.jwn.jwnssomanydragoneggs.egg;
+package net.jwn.jwnmanyegg.egg;
 
-import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
+import net.jwn.jwnmanyegg.JWNsDragonEggMod;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

@@ -1,6 +1,6 @@
-package net.jwn.jwnssomanydragoneggs.egg;
+package net.jwn.jwnmanyegg.egg;
 
-import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
+import net.jwn.jwnmanyegg.data.ModDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
@@ -23,7 +23,7 @@ public class EggRankedBlockEntity extends BlockEntity {
         super.applyImplicitComponents(componentGetter);
         Integer rank1 = componentGetter.get(ModDataComponents.RANK);
         if (rank1 != null) this.rank = rank1;
-        String owner1 = componentGetter.get(ModDataComponents.OWNER_NAME);
+        String owner1 = componentGetter.get(ModDataComponents.OWNER);
         if (owner1 != null) this.owner = owner1;
     }
 
@@ -32,7 +32,7 @@ public class EggRankedBlockEntity extends BlockEntity {
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
         components.set(ModDataComponents.RANK.get(), this.rank);
-        components.set(ModDataComponents.OWNER_NAME.get(), this.owner);
+        components.set(ModDataComponents.OWNER.get(), this.owner);
     }
 
     @Override

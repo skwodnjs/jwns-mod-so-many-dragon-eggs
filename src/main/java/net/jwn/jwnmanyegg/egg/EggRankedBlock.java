@@ -1,6 +1,6 @@
-package net.jwn.jwnssomanydragoneggs.egg;
+package net.jwn.jwnmanyegg.egg;
 
-import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
+import net.jwn.jwnmanyegg.data.ModDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +40,7 @@ public class EggRankedBlock extends DragonEggBlock implements EntityBlock {
             if (be instanceof EggRankedBlockEntity eggBe) {
                 Integer rank = stack.get(ModDataComponents.RANK);
                 if (rank != null) eggBe.setRank(rank);
-                String owner = stack.get(ModDataComponents.OWNER_NAME);
+                String owner = stack.get(ModDataComponents.OWNER);
                 if (owner != null) eggBe.setOwner(owner);
             }
         }
