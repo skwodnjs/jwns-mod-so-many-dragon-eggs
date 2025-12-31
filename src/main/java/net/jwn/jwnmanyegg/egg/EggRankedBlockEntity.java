@@ -8,6 +8,8 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerLevel;
@@ -103,14 +105,13 @@ public class EggRankedBlockEntity extends BlockEntity {
                                 .append(Component.literal(this.owner).withStyle(ChatFormatting.WHITE));
                         display.setCustomName(text);
 
-//                        JsonElement jsonElement = ComponentSerialization.CODEC.encodeStart(
-//                                serverLevel.registryAccess().createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE),
-//                                text
-//                        ).getOrThrow();
-//                        String jsonString = jsonElement.toString();
+                        Tag textTag = ComponentSerialization.CODEC.encodeStart(
+                                serverLevel.registryAccess().createSerializationContext(NbtOps.INSTANCE),
+                                text
+                        ).getOrThrow();
 
                         CompoundTag tag = new CompoundTag();
-                        tag.putString("text", text.getString());
+                        tag.put("text", textTag);
                         tag.putString("billboard", "center");
                         tag.putInt("background", 0);
 
