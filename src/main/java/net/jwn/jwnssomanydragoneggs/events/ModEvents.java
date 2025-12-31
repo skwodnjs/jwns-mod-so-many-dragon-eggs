@@ -4,6 +4,7 @@ import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
 import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
 import net.jwn.jwnssomanydragoneggs.egg.EggRankedBlockEntity;
 import net.jwn.jwnssomanydragoneggs.egg.ModBlocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -123,7 +124,14 @@ public class ModEvents {
                 ModDataComponents.RANK.get(),
                 0
         );
-        event.getToolTip().addFirst(Component.literal("#" + rank));
+        if (rank == 1) event.getToolTip().addFirst(Component.literal("#" + rank)
+                .withStyle(style -> style.withColor(0xFFD700)));
+        else if (rank <= 3) event.getToolTip().addFirst(Component.literal("#" + rank)
+                .withStyle(style -> style.withColor(0xC0C0C0)));
+        else if (rank <= 10) event.getToolTip().addFirst(Component.literal("#" + rank)
+                .withStyle(style -> style.withColor(0xCD7F32)));
+        else event.getToolTip().addFirst(Component.literal("#" + rank)
+                    .withStyle(style -> style.withColor(0x444444)));
         event.getToolTip().add(Component.translatable("tooltip.jwnssomanydragoneggs.dragon_egg.owner").append(": " + owner));
     }
 

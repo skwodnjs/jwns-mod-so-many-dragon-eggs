@@ -119,4 +119,9 @@ public class EggRankedBlock extends DragonEggBlock implements EntityBlock {
             }
         }
     }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+    }
 }

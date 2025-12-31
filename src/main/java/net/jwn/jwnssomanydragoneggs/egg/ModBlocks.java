@@ -2,6 +2,7 @@ package net.jwn.jwnssomanydragoneggs.egg;
 
 import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -17,12 +18,12 @@ public class ModBlocks {
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
         DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);
-        registerBlockItem(name, toReturn);
+        ModItems.ITEMS.registerItem(
+                name,
+                (properties) -> new BlockItem(toReturn.get(),
+                        properties.useBlockDescriptionPrefix().rarity(Rarity.EPIC))
+        );
         return toReturn;
-    }
-
-    private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
-        ModItems.ITEMS.registerItem(name, (properties) -> new BlockItem(block.get(), properties.useBlockDescriptionPrefix()));
     }
 
     public static void register(IEventBus eventBus) {
