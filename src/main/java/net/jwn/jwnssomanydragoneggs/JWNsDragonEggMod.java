@@ -2,6 +2,9 @@ package net.jwn.jwnssomanydragoneggs;
 
 import com.mojang.logging.LogUtils;
 import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
+import net.jwn.jwnssomanydragoneggs.egg.ModBlockEntities;
+import net.jwn.jwnssomanydragoneggs.egg.ModBlocks;
+import net.jwn.jwnssomanydragoneggs.egg.ModItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -28,6 +31,9 @@ public class JWNsDragonEggMod {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.

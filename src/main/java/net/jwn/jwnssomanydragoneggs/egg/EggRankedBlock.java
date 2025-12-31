@@ -1,0 +1,122 @@
+package net.jwn.jwnssomanydragoneggs.egg;
+
+import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DragonEggBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
+
+public class EggRankedBlock extends DragonEggBlock implements EntityBlock {
+    public EggRankedBlock(Properties properties) {
+        super(properties.noOcclusion());
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return new EggRankedBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (!(level.isClientSide()) && !(stack.is(ModBlocks.EGG_RANKED_BLOCK.asItem()))) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof EggRankedBlockEntity eggBe) {
+                Integer rank = stack.get(ModDataComponents.RANK);
+                if (rank != null) eggBe.setRank(rank);
+                String owner = stack.get(ModDataComponents.OWNER_NAME);
+                if (owner != null) eggBe.setOwner(owner);
+            }
+        }
+    }
+
+    @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (!(level.isClientSide())) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof EggRankedBlockEntity eggBe) {
+                System.out.println(eggBe.getRank());
+                System.out.println(eggBe.getOwner());
+            }
+        }
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (FallingBlock.isFree(level.getBlockState(pos.below()))) {
+            // only SERVER side
+            BlockEntity be = level.getBlockEntity(pos);
+            CompoundTag nbt = new CompoundTag();
+
+            if (be instanceof EggRankedBlockEntity eggBe) {
+                nbt = eggBe.saveWithFullMetadata(level.registryAccess());
+            }
+
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(level, pos, state);
+            fallingBlockEntity.blockData = nbt;
+            fallingBlockEntity.dropItem = false;
+        }
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState p_52923_, Level p_52924_, BlockPos p_52925_, Player p_52926_, BlockHitResult p_52928_) {
+        this.teleport(p_52923_, p_52924_, p_52925_);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+        this.teleport(state, level, pos);
+    }
+
+    private void teleport(BlockState state, Level level, BlockPos pos) {
+        WorldBorder worldborder = level.getWorldBorder();
+
+        for(int i = 0; i < 1000; ++i) {
+            BlockPos blockpos = pos.offset(level.random.nextInt(16) - level.random.nextInt(16), level.random.nextInt(8) - level.random.nextInt(8), level.random.nextInt(16) - level.random.nextInt(16));
+            if (level.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos) && !level.isOutsideBuildHeight(blockpos)) {
+                if (level.isClientSide()) {
+                    for(int j = 0; j < 128; ++j) {
+                        double d0 = level.random.nextDouble();
+                        float f = (level.random.nextFloat() - 0.5F) * 0.2F;
+                        float f1 = (level.random.nextFloat() - 0.5F) * 0.2F;
+                        float f2 = (level.random.nextFloat() - 0.5F) * 0.2F;
+                        double d1 = Mth.lerp(d0, (double)blockpos.getX(), (double)pos.getX()) + (level.random.nextDouble() - (double)0.5F) + (double)0.5F;
+                        double d2 = Mth.lerp(d0, (double)blockpos.getY(), (double)pos.getY()) + level.random.nextDouble() - (double)0.5F;
+                        double d3 = Mth.lerp(d0, (double)blockpos.getZ(), (double)pos.getZ()) + (level.random.nextDouble() - (double)0.5F) + (double)0.5F;
+                        level.addParticle(ParticleTypes.PORTAL, d1, d2, d3, (double)f, (double)f1, (double)f2);
+                    }
+                } else {
+                    level.setBlock(blockpos, state, 2);
+
+                    BlockEntity be = level.getBlockEntity(pos);
+                    BlockEntity be1 = level.getBlockEntity(blockpos);
+                    if ((be instanceof EggRankedBlockEntity eggBe) && (be1 instanceof EggRankedBlockEntity eggBe1)) {
+                        eggBe1.setRank(eggBe.getRank());
+                        eggBe1.setOwner(eggBe.getOwner());
+                    }
+
+                    level.removeBlock(pos, false);
+                }
+
+                return;
+            }
+        }
+    }
+}

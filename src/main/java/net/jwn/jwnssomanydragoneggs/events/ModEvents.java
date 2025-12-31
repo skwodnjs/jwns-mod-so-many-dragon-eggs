@@ -2,16 +2,22 @@ package net.jwn.jwnssomanydragoneggs.events;
 
 import net.jwn.jwnssomanydragoneggs.JWNsDragonEggMod;
 import net.jwn.jwnssomanydragoneggs.data.ModDataComponents;
+import net.jwn.jwnssomanydragoneggs.egg.EggRankedBlockEntity;
+import net.jwn.jwnssomanydragoneggs.egg.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ScoreAccess;
@@ -21,6 +27,8 @@ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -54,7 +62,7 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void onDragonDeath(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof ServerPlayer player && event.getEntity() instanceof EnderDragon) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player){// && event.getEntity() instanceof EnderDragon) {
             Scoreboard scoreboard = player.level().getScoreboard();
             Objective objective = scoreboard.getObjective("dragon_kills");
             if (objective == null) {
@@ -72,7 +80,7 @@ public class ModEvents {
             ScoreAccess score = scoreboard.getOrCreatePlayerScore(total, objective);
             score.add(1);
 
-            ItemStack egg = new ItemStack(Items.DRAGON_EGG);
+            ItemStack egg = new ItemStack(ModBlocks.EGG_RANKED_BLOCK.asItem());
 
             egg.set(ModDataComponents.OWNER_NAME.get(), player.getName().getString());
             egg.set(ModDataComponents.RANK.get(), score.get());
@@ -104,7 +112,7 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void onDragonEggTooltip(ItemTooltipEvent event) {
-        if (!event.getItemStack().is(net.minecraft.world.item.Items.DRAGON_EGG)) return;
+        if (!event.getItemStack().is(ModBlocks.EGG_RANKED_BLOCK.asItem()) && !event.getItemStack().is(Items.DRAGON_EGG)) return;
         ItemStack stack = event.getItemStack();
         String owner = stack.getOrDefault(
                 ModDataComponents.OWNER_NAME.get(),
@@ -116,6 +124,48 @@ public class ModEvents {
                 0
         );
         event.getToolTip().addFirst(Component.literal("#" + rank));
-        event.getToolTip().add(Component.translatable("tooltip.jwnssomanydragoneegss.dragon_egg.owner").append(": " + owner));
+        event.getToolTip().add(Component.translatable("tooltip.jwnssomanydragoneggs.dragon_egg.owner").append(": " + owner));
+    }
+
+    @SubscribeEvent
+    public static void onFallingEggSpawn(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof FallingBlockEntity fallingBlock) {
+            if (fallingBlock.getBlockState().is(ModBlocks.EGG_RANKED_BLOCK.get())) {
+                Level level = event.getLevel();
+                BlockPos pos = fallingBlock.blockPosition();
+
+                if (level.getBlockEntity(pos) instanceof EggRankedBlockEntity eggBe) {
+                    CompoundTag tag = new CompoundTag();
+                    tag.putInt("rank", eggBe.getRank());
+                    tag.putString("owner_name", eggBe.getOwner());
+
+                    fallingBlock.blockData = tag;
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onFallingEggDespawn(EntityLeaveLevelEvent event) {
+        if (event.getEntity() instanceof FallingBlockEntity fallingBlock) {
+            if (fallingBlock.getBlockState().is(ModBlocks.EGG_RANKED_BLOCK.get())) {
+                BlockPos blockPos = fallingBlock.blockPosition();
+                BlockState currentState = event.getLevel().getBlockState(blockPos);
+                if (currentState.is(fallingBlock.getBlockState().getBlock())) return;
+
+                CompoundTag nbt = fallingBlock.blockData;
+                if (nbt != null && !nbt.isEmpty()) {
+                    ItemStack stack = new ItemStack(ModBlocks.EGG_RANKED_BLOCK.get());
+                    if (nbt.contains("egg_rank")) nbt.getInt("egg_rank").ifPresent(i -> stack.set(ModDataComponents.RANK.get(), i));
+                    if (nbt.contains("egg_owner")) nbt.getString("egg_owner").ifPresent(s -> stack.set(ModDataComponents.OWNER_NAME.get(), s));
+
+                    BlockPos pos = event.getEntity().blockPosition();
+                    ItemEntity itemEntity = new ItemEntity(event.getLevel(),
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+                    itemEntity.setDefaultPickUpDelay();
+                    event.getLevel().addFreshEntity(itemEntity);
+                }
+            }
+        }
     }
 }
