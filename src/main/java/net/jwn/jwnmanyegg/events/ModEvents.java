@@ -29,6 +29,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
+import static net.jwn.jwnmanyegg.egg.EggRankedBlockEntity.getRankColor;
+
 @EventBusSubscriber(modid = JWNsDragonEggMod.MOD_ID)
 public class ModEvents {
     @SubscribeEvent
@@ -119,15 +121,9 @@ public class ModEvents {
                 ModDataComponents.RANK.get(),
                 0
         );
-        if (rank == 1) event.getToolTip().addFirst(Component.literal("#" + rank)
-                .withStyle(style -> style.withColor(0xFFD700)));
-        else if (rank <= 3) event.getToolTip().addFirst(Component.literal("#" + rank)
-                .withStyle(style -> style.withColor(0xC0C0C0)));
-        else if (rank <= 10) event.getToolTip().addFirst(Component.literal("#" + rank)
-                .withStyle(style -> style.withColor(0xCD7F32)));
-        else event.getToolTip().addFirst(Component.literal("#" + rank)
-                    .withStyle(style -> style.withColor(0x444444)));
-        event.getToolTip().add(Component.translatable("tooltip.jwnmanyegg.dragon_egg.owner").append(": " + owner));
+        event.getToolTip().addFirst(Component.literal("#" + rank)
+                .withStyle(style -> style.withColor(getRankColor(rank))));
+        event.getToolTip().addLast(Component.translatable("tooltip.jwnmanyegg.dragon_egg.owner").append(": " + owner));
     }
 
     @SubscribeEvent

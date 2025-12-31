@@ -42,6 +42,8 @@ public class EggRankedBlock extends DragonEggBlock implements EntityBlock {
                 if (rank != null) eggBe.setRank(rank);
                 String owner = stack.get(ModDataComponents.OWNER);
                 if (owner != null) eggBe.setOwner(owner);
+
+                eggBe.updateNameTag();
             }
         }
     }
